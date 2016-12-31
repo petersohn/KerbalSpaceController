@@ -1,3 +1,9 @@
+#if ARDUINO >= 100
+    #include "Arduino.h"
+#else
+    #include "WProgram.h"
+#endif
+
 #include <Joystick.h>
 
 Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
@@ -8,7 +14,6 @@ Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
     false, false, false); // accelerator, brake, steering
 
 void setup() {
-    Serial.begin(9600);
     pinMode(1, INPUT_PULLUP);
 }
 
