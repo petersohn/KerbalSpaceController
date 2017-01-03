@@ -6,18 +6,26 @@
 
 #include <Joystick.h>
 
+#include "Controller.hpp"
+
 Joystick_ joystick(0x03, JOYSTICK_TYPE_JOYSTICK,
-    1, 0, // button, hat switch
+    3, 0, // button, hat switch
     false, false, false, // x, y, z
     false, false, false, // rx, ry, rz
     false, false, // rudder, throttle
     false, false, false); // accelerator, brake, steering
 
+ButtonData buttons[] = {
+    ButtonData{0, 0},
+    ButtonData{1, 1},
+    ButtonData{2, 2},
+};
+
 void setup() {
-    pinMode(0, INPUT_PULLUP);
+    initializeButtons(buttons);
 }
 
 void loop() {
-    joystick.setButton(0, !digitalRead(0));
+    processButtons(joystick, buttons);
     joystick.sendState();
 }

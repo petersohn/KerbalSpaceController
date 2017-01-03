@@ -8,10 +8,17 @@ struct ButtonData {
     int targetButton;
 };
 
-template<typename Buttons>
-void processButtons(Joystick& joystick, const Buttons& buttons) {
-    for (const ButtonData button : buttons) {
-        joystick.setButton(button.targetButton, !digitalRead(button.pin));
+inline
+void processButtons(Joystick_& joystick, const ButtonData buttons[]) {
+    for (const ButtonData* button = buttons; button->pin >= 0; ++button) {
+        joystick.setButton(button->targetButton, !digitalRead(button->pin));
+    }
+}
+
+inline
+void initializeButtons(const ButtonData buttons[]) {
+    for (const ButtonData* button = buttons; button->pin >= 0; ++button) {
+        pinMode(button->pin, INPUT_PULLUP);
     }
 }
 
