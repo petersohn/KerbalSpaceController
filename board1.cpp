@@ -19,6 +19,7 @@ ButtonData buttons[] = {
     ButtonData{0, 0},
     ButtonData{1, 1},
     ButtonData{2, 2},
+    ButtonData{-1, 0}
 };
 
 void setup() {
