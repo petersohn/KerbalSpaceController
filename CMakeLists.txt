@@ -20,6 +20,7 @@ generate_arduino_firmware(board1
     HDRS Controller.hpp "${JOYSTICK_DIR}/Joystick.h"
     LIBS Joystick
     PORT /dev/ttyACM0
+    PROGRAMMER avrispmkii
     BOARD leonardo)
 
 generate_arduino_firmware(board2
@@ -27,4 +28,5 @@ generate_arduino_firmware(board2
     HDRS Controller.hpp "${JOYSTICK_DIR}/Joystick.h"
     LIBS Joystick
     PORT /dev/ttyACM1
+    PROGRAMMER avrispmkii
     BOARD leonardo)
