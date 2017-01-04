@@ -16,9 +16,14 @@ Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
     false, false, false); // accelerator, brake, steering
 
 ButtonData buttons[] = {
-    ButtonData{0, 2},
+    ButtonData{0, 0},
     ButtonData{1, 1},
-    ButtonData{2, 0},
+    ButtonData{2, 2},
+    ButtonData{3, 3},
+    ButtonData{5, 4},
+    ButtonData{7, 5},
+    ButtonData{11, 6},
+    ButtonData{13, 7},
     ButtonData{-1, 0}
 };
 
