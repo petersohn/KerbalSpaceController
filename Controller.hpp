@@ -41,5 +41,51 @@ void processAxes(Joystick_& joystick, const AxisData axes[]) {
     }
 }
 
+struct MultiButtonData {
+    int pin;
+    int numButtons;
+    int valueRange;
+    int* buttons;
+};
+
+inline
+void initializeMultiButtons(MultiButtonData buttons[]) {
+    for (MultiButtonData* data = buttons; data->pin >= 0; ++data) {
+        pinMode(data->pin, INPUT);
+        data->numButtons = 0;
+        for (const int* button = data->buttons; *button > -2; ++button) {
+            ++data->numButtons;
+        }
+        data->valueRange = 1024 / data->numButtons;
+        if (1024 % data->numButtons != 0) {
+            ++data->valueRange;
+        }
+    }
+}
+
+inline
+void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
+    for (const MultiButtonData* data = buttons; data->pin >= 0; ++data) {
+        int pinValue = analogRead(data->pin);
+        int value = pinValue / data->valueRange;
+        // Serial.print("Pin=");
+        // Serial.print(data->pin);
+        // Serial.print(" pinValue=");
+        // Serial.println(pinValue);
+        // Serial.print(" numButtons=");
+        // Serial.print(data->numButtons);
+        // Serial.print(" valueRange=");
+        // Serial.print(data->valueRange);
+        // Serial.print(" value=");
+        // Serial.print(value);
+        // Serial.print(" button=");
+        // Serial.println(data->buttons[value]);
+        for (int i = 0; i < data->numButtons; ++i) {
+            if (data->buttons[i] >= 0) {
+                joystick.setButton(data->buttons[i], i == value);
+            }
+        }
+    }
+}
 
 #endif // CONTROLLER_HPP

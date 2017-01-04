@@ -9,7 +9,7 @@
 #include "Controller.hpp"
 
 Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
-    3, 0, // button, hat switch
+    22, 0, // button, hat switch
     true, true, true, // x, y, z
     true, true, true, // rx, ry, rz
     false, false, // rudder, throttle
@@ -32,14 +32,29 @@ AxisData axes[] = {
     AxisData{-1, nullptr}
 };
 
+int walkerXButtons[] = {8, -1, 9, -2};
+int walkerYButtons[] = {10, -1, 11, -2};
+int sasButtons[] = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, -2};
+
+MultiButtonData multiButtons[] = {
+    MultiButtonData{A7, 0, 0, walkerXButtons},
+    MultiButtonData{A6, 0, 0, walkerYButtons},
+    MultiButtonData{A8, 0, 0, sasButtons},
+    MultiButtonData{-1, 0, 0, nullptr}
+};
+
 void setup() {
     initializeButtons(buttons);
     initializeAxes(axes);
+    initializeMultiButtons(multiButtons);
+    // Serial.begin(115200);
 }
 
 void loop() {
+    // Serial.println("loop");
     processButtons(joystick, buttons);
     processAxes(joystick, axes);
+    processMultiButtons(joystick, multiButtons);
     joystick.sendState();
 }
 
