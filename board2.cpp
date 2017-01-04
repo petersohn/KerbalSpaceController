@@ -37,10 +37,10 @@ int walkerYButtons[] = {10, -1, 11, -2};
 int sasButtons[] = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, -2};
 
 MultiButtonData multiButtons[] = {
-    MultiButtonData{A7, 0, 0, walkerXButtons},
-    MultiButtonData{A6, 0, 0, walkerYButtons},
-    MultiButtonData{A8, 0, 0, sasButtons},
-    MultiButtonData{-1, 0, 0, nullptr}
+    MultiButtonData{A7, -1, 0, 0, walkerXButtons},
+    MultiButtonData{A6, -1, 0, 0, walkerYButtons},
+    MultiButtonData{A8, 9, 0, 0, sasButtons},
+    MultiButtonData{-1, 0, 0, 0, nullptr}
 };
 
 void setup() {

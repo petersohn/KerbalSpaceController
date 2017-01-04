@@ -43,6 +43,7 @@ void processAxes(Joystick_& joystick, const AxisData axes[]) {
 
 struct MultiButtonData {
     int pin;
+    int guardPin;
     int numButtons;
     int valueRange;
     int* buttons;
@@ -52,6 +53,9 @@ inline
 void initializeMultiButtons(MultiButtonData buttons[]) {
     for (MultiButtonData* data = buttons; data->pin >= 0; ++data) {
         pinMode(data->pin, INPUT);
+        if (data->guardPin >= 0) {
+            pinMode(data->guardPin, INPUT_PULLUP);
+        }
         data->numButtons = 0;
         for (const int* button = data->buttons; *button > -2; ++button) {
             ++data->numButtons;
@@ -66,6 +70,14 @@ void initializeMultiButtons(MultiButtonData buttons[]) {
 inline
 void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
     for (const MultiButtonData* data = buttons; data->pin >= 0; ++data) {
+        if (data->guardPin >= 0 && !digitalRead(data->guardPin)) {
+            for (int i = 0; i < data->numButtons; ++i) {
+                if (data->buttons[i] >= 0) {
+                    joystick.setButton(data->buttons[i], false);
+                }
+            }
+            continue;
+        }
         int pinValue = analogRead(data->pin);
         int value = pinValue / data->valueRange;
         // Serial.print("Pin=");
