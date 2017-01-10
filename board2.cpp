@@ -50,6 +50,7 @@ MultiButtonData multiButtons[] = {
 
 void setup() {
     // Serial.begin(115200);
+    joystick.begin(false);
 }
 
 void loop() {

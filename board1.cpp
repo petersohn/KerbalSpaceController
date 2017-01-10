@@ -49,6 +49,7 @@ MultiButtonData multiButtons[] = {
 };
 
 void setup() {
+    joystick.begin(false);
 }
 
 void loop() {
