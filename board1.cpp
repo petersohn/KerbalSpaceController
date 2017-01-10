@@ -4,9 +4,10 @@
     #include "WProgram.h"
 #endif
 
-#include <Joystick.h>
-
+#include "ButtonPresser.hpp"
 #include "Controller.hpp"
+
+#include <Joystick.h>
 
 Joystick_ joystick(0x03, JOYSTICK_TYPE_JOYSTICK,
     15, 0, // button, hat switch
@@ -32,12 +33,20 @@ ButtonData buttons[] = {
     ButtonData{}
 };
 
+ButtonPresser throttleKiller{joystick, 12};
+
+void postProcessThrottle(int value) {
+    if (value == 0) {
+        throttleKiller.press();
+    }
+}
+
 AxisData axes[] = {
     AxisData{A1, &Joystick_::setYAxis},
     AxisData{A2, &Joystick_::setXAxis},
     AxisData{A3, &Joystick_::setAccelerator},
     AxisData{A4, &Joystick_::setSteering},
-    AxisData{A5, &Joystick_::setThrottle},
+    AxisData{A5, &Joystick_::setThrottle, &postProcessThrottle},
     AxisData{}
 };
 
@@ -56,5 +65,6 @@ void loop() {
     processButtons(joystick, buttons);
     processAxes(joystick, axes);
     processMultiButtons(joystick, multiButtons);
+    throttleKiller.update();
     joystick.sendState();
 }

@@ -31,14 +31,17 @@ void processButtons(Joystick_& joystick, ButtonData buttons[]) {
 
 struct AxisData {
     using AxisMethod = void(Joystick_::*)(int);
+    using ExtraAction = void(*)(int);
     int pin;
     AxisMethod function;
+    ExtraAction extraAction;
     LazyChanger<int> changer;
 
     AxisData() : pin(-1), function(nullptr) {}
 
-    AxisData(int pin, AxisMethod function) :
-            pin(pin), function(function), changer{512} {
+    AxisData(int pin, AxisMethod function, ExtraAction extraAction = nullptr) :
+            pin(pin), function(function), extraAction(extraAction),
+            changer{512} {
         pinMode(pin, INPUT);
     }
 };
@@ -49,6 +52,9 @@ void processAxes(Joystick_& joystick, AxisData axes[]) {
         axis->changer.update(analogRead(axis->pin),
                 [&joystick, axis](int value) {
                     (joystick.*(axis->function))(value);
+                    if (axis->extraAction) {
+                        (*axis->extraAction)(value);
+                    }
                 });
     }
 }
