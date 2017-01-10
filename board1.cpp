@@ -9,7 +9,7 @@
 #include "Controller.hpp"
 
 Joystick_ joystick(0x03, JOYSTICK_TYPE_JOYSTICK,
-    14, 0, // button, hat switch
+    15, 0, // button, hat switch
     true, true, false, // x, y, z
     false, false, false, // rx, ry, rz
     false, true, // rudder, throttle
@@ -27,6 +27,7 @@ ButtonData buttons[] = {
     ButtonData{9, 8},
     ButtonData{10, 9},
     ButtonData{11, 10},
+    ButtonData{12, 12},
     ButtonData{13, 11},
     ButtonData{}
 };
@@ -40,7 +41,7 @@ AxisData axes[] = {
     AxisData{}
 };
 
-int zoomButtons[] = {12, -1, 13, -2};
+int zoomButtons[] = {13, -1, 14, -2};
 
 MultiButtonData multiButtons[] = {
     MultiButtonData{A0, -1, zoomButtons},
