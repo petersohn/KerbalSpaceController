@@ -24,7 +24,7 @@ ButtonData buttons[] = {
     ButtonData{7, 5},
     ButtonData{11, 6},
     ButtonData{13, 7},
-    ButtonData{-1, 0}
+    ButtonData{}
 };
 
 AxisData axes[] = {
@@ -34,7 +34,7 @@ AxisData axes[] = {
     AxisData{A3, &Joystick_::setRzAxis},
     AxisData{A4, &Joystick_::setRyAxis},
     AxisData{A5, &Joystick_::setRxAxis},
-    AxisData{-1, nullptr}
+    AxisData{}
 };
 
 int walkerXButtons[] = {8, -1, 9, -2};
@@ -42,16 +42,13 @@ int walkerYButtons[] = {10, -1, 11, -2};
 int sasButtons[] = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, -2};
 
 MultiButtonData multiButtons[] = {
-    MultiButtonData{A7, -1, 0, 0, walkerXButtons},
-    MultiButtonData{A6, -1, 0, 0, walkerYButtons},
-    MultiButtonData{A8, 9, 0, 0, sasButtons},
-    MultiButtonData{-1, 0, 0, 0, nullptr}
+    MultiButtonData{A7, -1, walkerXButtons},
+    MultiButtonData{A6, -1, walkerYButtons},
+    MultiButtonData{A8, 9, sasButtons},
+    MultiButtonData{}
 };
 
 void setup() {
-    initializeButtons(buttons);
-    initializeAxes(axes);
-    initializeMultiButtons(multiButtons);
     // Serial.begin(115200);
 }
 

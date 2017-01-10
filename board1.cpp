@@ -28,7 +28,7 @@ ButtonData buttons[] = {
     ButtonData{10, 9},
     ButtonData{11, 10},
     ButtonData{13, 11},
-    ButtonData{-1, 0}
+    ButtonData{}
 };
 
 AxisData axes[] = {
@@ -37,20 +37,17 @@ AxisData axes[] = {
     AxisData{A3, &Joystick_::setAccelerator},
     AxisData{A4, &Joystick_::setSteering},
     AxisData{A5, &Joystick_::setThrottle},
-    AxisData{-1, nullptr}
+    AxisData{}
 };
 
 int zoomButtons[] = {12, -1, 13, -2};
 
 MultiButtonData multiButtons[] = {
-    MultiButtonData{A0, -1, 0, 0, zoomButtons},
-    MultiButtonData{-1, 0, 0, 0, nullptr}
+    MultiButtonData{A0, -1, zoomButtons},
+    MultiButtonData{}
 };
 
 void setup() {
-    initializeButtons(buttons);
-    initializeAxes(axes);
-    initializeMultiButtons(multiButtons);
 }
 
 void loop() {

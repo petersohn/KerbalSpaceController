@@ -1,43 +1,55 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
+#include "LazyChanger.hpp"
+
 #include <Joystick.h>
 
 struct ButtonData {
     int pin;
     int targetButton;
+    LazyChanger<bool> changer;
+
+
+    ButtonData() : pin(-1), targetButton(-1) {}
+
+    ButtonData(int pin, int targetButton) :
+            pin(pin), targetButton(targetButton), changer{false} {
+        pinMode(pin, INPUT_PULLUP);
+    }
 };
 
 inline
-void initializeButtons(const ButtonData buttons[]) {
-    for (const ButtonData* button = buttons; button->pin >= 0; ++button) {
-        pinMode(button->pin, INPUT_PULLUP);
-    }
-}
-
-inline
-void processButtons(Joystick_& joystick, const ButtonData buttons[]) {
-    for (const ButtonData* button = buttons; button->pin >= 0; ++button) {
-        joystick.setButton(button->targetButton, !digitalRead(button->pin));
+void processButtons(Joystick_& joystick, ButtonData buttons[]) {
+    for (ButtonData* button = buttons; button->pin >= 0; ++button) {
+        button->changer.update(!digitalRead(button->pin),
+                [&joystick, button](bool value) {
+                    joystick.setButton(button->targetButton, value);
+                });
     }
 }
 
 struct AxisData {
+    using AxisMethod = void(Joystick_::*)(int);
     int pin;
-    void (Joystick_::*function)(int);
+    AxisMethod function;
+    LazyChanger<int> changer;
+
+    AxisData() : pin(-1), function(nullptr) {}
+
+    AxisData(int pin, AxisMethod function) :
+            pin(pin), function(function), changer{512} {
+        pinMode(pin, INPUT);
+    }
 };
 
 inline
-void initializeAxes(const AxisData axes[]) {
-    for (const AxisData* axis = axes; axis->pin >= 0; ++axis) {
-        pinMode(axis->pin, INPUT);
-    }
-}
-
-inline
-void processAxes(Joystick_& joystick, const AxisData axes[]) {
-    for (const AxisData* axis = axes; axis->pin >= 0; ++axis) {
-        (joystick.*(axis->function))(analogRead(axis->pin));
+void processAxes(Joystick_& joystick, AxisData axes[]) {
+    for (AxisData* axis = axes; axis->pin >= 0; ++axis) {
+        axis->changer.update(analogRead(axis->pin),
+                [&joystick, axis](int value) {
+                    (joystick.*(axis->function))(value);
+                });
     }
 }
 
@@ -47,25 +59,28 @@ struct MultiButtonData {
     int numButtons;
     int valueRange;
     int* buttons;
-};
+    LazyChanger<int> changer;
 
-inline
-void initializeMultiButtons(MultiButtonData buttons[]) {
-    for (MultiButtonData* data = buttons; data->pin >= 0; ++data) {
-        pinMode(data->pin, INPUT);
-        if (data->guardPin >= 0) {
-            pinMode(data->guardPin, INPUT_PULLUP);
+    MultiButtonData() :
+            pin(-1), guardPin(-1), numButtons(0), valueRange(0),
+            buttons(nullptr) {}
+
+    MultiButtonData(int pin, int guardPin, int* buttons) :
+            pin(pin), guardPin(guardPin), numButtons(0), valueRange(0),
+            buttons(buttons), changer{0} {
+        pinMode(pin, INPUT);
+        if (guardPin >= 0) {
+            pinMode(guardPin, INPUT_PULLUP);
         }
-        data->numButtons = 0;
-        for (const int* button = data->buttons; *button > -2; ++button) {
-            ++data->numButtons;
+        for (const int* button = buttons; *button > -2; ++button) {
+            ++numButtons;
         }
-        data->valueRange = 1024 / data->numButtons;
-        if (1024 % data->numButtons != 0) {
-            ++data->valueRange;
+        valueRange = 1024 / numButtons;
+        if (1024 % numButtons != 0) {
+            ++valueRange;
         }
     }
-}
+};
 
 inline
 void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
@@ -80,18 +95,6 @@ void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
         }
         int pinValue = analogRead(data->pin);
         int value = pinValue / data->valueRange;
-        // Serial.print("Pin=");
-        // Serial.print(data->pin);
-        // Serial.print(" pinValue=");
-        // Serial.println(pinValue);
-        // Serial.print(" numButtons=");
-        // Serial.print(data->numButtons);
-        // Serial.print(" valueRange=");
-        // Serial.print(data->valueRange);
-        // Serial.print(" value=");
-        // Serial.print(value);
-        // Serial.print(" button=");
-        // Serial.println(data->buttons[value]);
         for (int i = 0; i < data->numButtons; ++i) {
             if (data->buttons[i] >= 0) {
                 joystick.setButton(data->buttons[i], i == value);
