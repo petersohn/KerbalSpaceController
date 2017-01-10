@@ -15,10 +15,11 @@ void initializeButtons(const ButtonData buttons[]) {
     }
 }
 
-inline
-void processButtons(Joystick_& joystick, const ButtonData buttons[]) {
+template<typename ButtonController>
+void processButtons(ButtonController& controller, const ButtonData buttons[]) {
     for (const ButtonData* button = buttons; button->pin >= 0; ++button) {
-        joystick.setButton(button->targetButton, !digitalRead(button->pin));
+        controller.setButtonValue(
+                button->targetButton, !digitalRead(button->pin));
     }
 }
 
@@ -67,13 +68,14 @@ void initializeMultiButtons(MultiButtonData buttons[]) {
     }
 }
 
-inline
-void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
+template<typename ButtonController>
+void processMultiButtons(ButtonController& controller,
+        const MultiButtonData buttons[]) {
     for (const MultiButtonData* data = buttons; data->pin >= 0; ++data) {
         if (data->guardPin >= 0 && !digitalRead(data->guardPin)) {
             for (int i = 0; i < data->numButtons; ++i) {
                 if (data->buttons[i] >= 0) {
-                    joystick.setButton(data->buttons[i], false);
+                    controller.setButtonValue(data->buttons[i], false);
                 }
             }
             continue;
@@ -94,7 +96,7 @@ void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
         // Serial.println(data->buttons[value]);
         for (int i = 0; i < data->numButtons; ++i) {
             if (data->buttons[i] >= 0) {
-                joystick.setButton(data->buttons[i], i == value);
+                controller.setButtonValue(data->buttons[i], i == value);
             }
         }
     }

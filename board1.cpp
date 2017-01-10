@@ -5,11 +5,13 @@
 #endif
 
 #include <Joystick.h>
+#include <Keyboard.h>
 
 #include "Controller.hpp"
+#include "JoystickButtonController.hpp"
 
 Joystick_ joystick(0x03, JOYSTICK_TYPE_JOYSTICK,
-    14, 0, // button, hat switch
+    15, 0, // button, hat switch
     true, true, false, // x, y, z
     false, false, false, // rx, ry, rz
     false, true, // rudder, throttle
@@ -28,19 +30,20 @@ ButtonData buttons[] = {
     ButtonData{10, 9},
     ButtonData{11, 10},
     ButtonData{13, 11},
+    ButtonData{12, 12},
     ButtonData{-1, 0}
 };
 
 AxisData axes[] = {
-    AxisData{A1, &Joystick_::setYAxis},
-    AxisData{A2, &Joystick_::setXAxis},
+    // AxisData{A1, &Joystick_::setYAxis},
+    // AxisData{A2, &Joystick_::setXAxis},
     AxisData{A3, &Joystick_::setAccelerator},
     AxisData{A4, &Joystick_::setSteering},
     AxisData{A5, &Joystick_::setThrottle},
     AxisData{-1, nullptr}
 };
 
-int zoomButtons[] = {12, -1, 13, -2};
+int zoomButtons[] = {13, -1, 14, -2};
 
 MultiButtonData multiButtons[] = {
     MultiButtonData{A0, -1, 0, 0, zoomButtons},
@@ -53,9 +56,11 @@ void setup() {
     initializeMultiButtons(multiButtons);
 }
 
+JoystickButtonController joystickButtonController{joystick};
+
 void loop() {
-    processButtons(joystick, buttons);
+    processButtons(joystickButtonController, buttons);
     processAxes(joystick, axes);
-    processMultiButtons(joystick, multiButtons);
+    processMultiButtons(joystickButtonController, multiButtons);
     joystick.sendState();
 }

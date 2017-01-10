@@ -35,7 +35,7 @@ generate_arduino_library(Joystick
 
 generate_arduino_firmware(board1
     SRCS board1.cpp
-    HDRS Controller.hpp "${JOYSTICK_DIR}/Joystick.h"
+    HDRS "${JOYSTICK_DIR}/Joystick.h"
     LIBS Joystick
     PORT /dev/ttyACM0
     PROGRAMMER avrispmkii
@@ -43,8 +43,9 @@ generate_arduino_firmware(board1
 
 generate_arduino_firmware(board2
     SRCS board2.cpp
-    HDRS Controller.hpp "${JOYSTICK_DIR}/Joystick.h"
+    HDRS "${JOYSTICK_DIR}/Joystick.h"
     LIBS Joystick
+    ARDLIBS HID
     PORT /dev/ttyACM1
     PROGRAMMER avrispmkii
     BOARD ksc2)
