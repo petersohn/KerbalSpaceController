@@ -1,29 +1,29 @@
 #ifndef BUTTONPRESSER_HPP
 #define BUTTONPRESSER_HPP
 
-#include <Joystick.h>
+#include "Pressable.hpp"
 
 class ButtonPresser {
 public:
-    ButtonPresser(Joystick_& joystick, int button)
+    ButtonPresser(Joystick_& joystick, Pressable button)
             : joystick(joystick), button(button) {
     }
 
     void update() {
         if (releaseTime != 0 && millis() >= releaseTime) {
-            joystick.releaseButton(button);
+            button.process(joystick, false);
             releaseTime = 0;
         }
     }
 
     void press() {
-        joystick.pressButton(button);
+        button.process(joystick, true);
         releaseTime = millis() + releaseDelay;
     }
 
 private:
     Joystick_& joystick;
-    int button;
+    Pressable button;
     unsigned long releaseTime = 0;
 
     static constexpr int releaseDelay = 100;

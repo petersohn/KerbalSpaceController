@@ -17,23 +17,23 @@ Joystick_ joystick(0x03, JOYSTICK_TYPE_JOYSTICK,
     true, false, true); // accelerator, brake, steering
 
 ButtonData buttons[] = {
-    ButtonData{0, 0},
-    ButtonData{1, 1},
-    ButtonData{2, 2},
-    ButtonData{3, 3},
-    ButtonData{4, 4},
-    ButtonData{5, 5},
-    ButtonData{6, 6},
-    ButtonData{7, 7},
-    ButtonData{9, 8},
-    ButtonData{10, 9},
-    ButtonData{11, 10},
-    ButtonData{12, 12},
-    ButtonData{13, 11},
+    ButtonData{0, Button{0}},
+    ButtonData{1, Button{1}},
+    ButtonData{2, Button{2}},
+    ButtonData{3, Button{3}},
+    ButtonData{4, Button{4}},
+    ButtonData{5, Button{5}},
+    ButtonData{6, Button{6}},
+    ButtonData{7, Button{7}},
+    ButtonData{9, Button{8}},
+    ButtonData{10, Button{9}},
+    ButtonData{11, Button{10}},
+    ButtonData{12, Button{12}},
+    ButtonData{13, Button{11}},
     ButtonData{}
 };
 
-ButtonPresser throttleKiller{joystick, 12};
+ButtonPresser throttleKiller{joystick, Button{12}};
 
 void postProcessThrottle(int value) {
     if (value == 0) {
@@ -50,7 +50,7 @@ AxisData axes[] = {
     AxisData{}
 };
 
-int zoomButtons[] = {13, -1, 14, -2};
+Pressable zoomButtons[] = {Button{13}, Button{-1}, Button{14}, None{}};
 
 MultiButtonData multiButtons[] = {
     MultiButtonData{A0, -1, zoomButtons},
@@ -59,6 +59,7 @@ MultiButtonData multiButtons[] = {
 
 void setup() {
     joystick.begin(false);
+    Serial.begin(115200);
 }
 
 void loop() {

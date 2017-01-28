@@ -2,18 +2,19 @@
 #define CONTROLLER_HPP
 
 #include "LazyChanger.hpp"
+#include "Pressable.hpp"
 
 #include <Joystick.h>
 
 struct ButtonData {
     int pin;
-    int targetButton;
+    Pressable targetButton;
     LazyChanger<bool> changer;
 
 
-    ButtonData() : pin(-1), targetButton(-1) {}
+    ButtonData() : pin(-1), targetButton(None{}) {}
 
-    ButtonData(int pin, int targetButton) :
+    ButtonData(int pin, Pressable targetButton) :
             pin(pin), targetButton(targetButton), changer{false} {
         pinMode(pin, INPUT_PULLUP);
     }
@@ -24,7 +25,7 @@ void processButtons(Joystick_& joystick, ButtonData buttons[]) {
     for (ButtonData* button = buttons; button->pin >= 0; ++button) {
         button->changer.update(!digitalRead(button->pin),
                 [&joystick, button](bool value) {
-                    joystick.setButton(button->targetButton, value);
+                    button->targetButton.process(joystick, value);
                 });
     }
 }
@@ -64,21 +65,21 @@ struct MultiButtonData {
     int guardPin;
     int numButtons;
     int valueRange;
-    int* buttons;
+    Pressable* buttons;
     LazyChanger<int> changer;
 
     MultiButtonData() :
             pin(-1), guardPin(-1), numButtons(0), valueRange(0),
             buttons(nullptr) {}
 
-    MultiButtonData(int pin, int guardPin, int* buttons) :
+    MultiButtonData(int pin, int guardPin, Pressable* buttons) :
             pin(pin), guardPin(guardPin), numButtons(0), valueRange(0),
             buttons(buttons), changer{0} {
         pinMode(pin, INPUT);
         if (guardPin >= 0) {
             pinMode(guardPin, INPUT_PULLUP);
         }
-        for (const int* button = buttons; *button > -2; ++button) {
+        for (const Pressable* button = buttons; *button; ++button) {
             ++numButtons;
         }
         valueRange = 1024 / numButtons;
@@ -91,20 +92,13 @@ struct MultiButtonData {
 inline
 void processMultiButtons(Joystick_& joystick, const MultiButtonData buttons[]) {
     for (const MultiButtonData* data = buttons; data->pin >= 0; ++data) {
-        if (data->guardPin >= 0 && !digitalRead(data->guardPin)) {
-            for (int i = 0; i < data->numButtons; ++i) {
-                if (data->buttons[i] >= 0) {
-                    joystick.setButton(data->buttons[i], false);
-                }
-            }
-            continue;
+        int value = -1;
+        if (data->guardPin < 0 || digitalRead(data->guardPin)) {
+            int pinValue = analogRead(data->pin);
+            value = pinValue / data->valueRange;
         }
-        int pinValue = analogRead(data->pin);
-        int value = pinValue / data->valueRange;
         for (int i = 0; i < data->numButtons; ++i) {
-            if (data->buttons[i] >= 0) {
-                joystick.setButton(data->buttons[i], i == value);
-            }
+            data->buttons[i].process(joystick, i == value);
         }
     }
 }

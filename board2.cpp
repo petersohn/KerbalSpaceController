@@ -5,25 +5,26 @@
 #endif
 
 #include <Joystick.h>
+#include <Keyboard.h>
 
 #include "Controller.hpp"
 
 Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
-    22, 0, // button, hat switch
+    15, 0, // button, hat switch
     true, true, true, // x, y, z
     true, true, true, // rx, ry, rz
     false, false, // rudder, throttle
     false, false, false); // accelerator, brake, steering
 
 ButtonData buttons[] = {
-    ButtonData{0, 0},
-    ButtonData{1, 1},
-    ButtonData{2, 2},
-    ButtonData{3, 3},
-    ButtonData{5, 4},
-    ButtonData{7, 5},
-    ButtonData{11, 6},
-    ButtonData{13, 7},
+    ButtonData{0, Button{0}},
+    ButtonData{1, Button{1}},
+    ButtonData{2, Button{2}},
+    ButtonData{3, Key{KEY_ESC}},
+    ButtonData{5, Key{KEY_F9}},
+    ButtonData{7, Key{KEY_F5}},
+    ButtonData{11, Button{3}},
+    ButtonData{13, Button{4}},
     ButtonData{}
 };
 
@@ -37,9 +38,11 @@ AxisData axes[] = {
     AxisData{}
 };
 
-int walkerXButtons[] = {8, -1, 9, -2};
-int walkerYButtons[] = {10, -1, 11, -2};
-int sasButtons[] = {12, 13, 14, 15, 16, 17, 18, 19, 20, 21, -2};
+Pressable walkerXButtons[] = {Key('a'), Button{-1}, Key('d'), None{}};
+Pressable walkerYButtons[] = {Key('w'), Button{-1}, Key('s'), None{}};
+Pressable sasButtons[] = {Button{5}, Button{6}, Button{7}, Button{8},
+        Button{9}, Button{10}, Button{11}, Button{12}, Button{13}, Button{14},
+        None{}};
 
 MultiButtonData multiButtons[] = {
     MultiButtonData{A7, -1, walkerXButtons},
@@ -51,6 +54,8 @@ MultiButtonData multiButtons[] = {
 void setup() {
     // Serial.begin(115200);
     joystick.begin(false);
+    Keyboard.begin();
+    Serial.begin(115200);
 }
 
 void loop() {

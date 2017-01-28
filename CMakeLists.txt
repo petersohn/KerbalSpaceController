@@ -1,11 +1,6 @@
 project(KerbalSpaceController)
 cmake_minimum_required(VERSION 3.6)
 
-# get_cmake_property(_variableNames VARIABLES)
-# foreach (_variableName ${_variableNames})
-#     message(STATUS "${_variableName}=${${_variableName}}")
-# endforeach()
-
 function(copy_platform PLATFORM_NAME INPUT_BOARD_ID OUTPUT_BOARD_ID OUTPUT_BOARD_NAME)
     set(SOURCE_PATH ${${ARDUINO_PLATFORM}_PLATFORM_PATH})
     set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${PLATFORM_NAME})
@@ -26,6 +21,11 @@ set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++14 -I${JOYSTICK_DIR}")
 copy_platform(avr1 leonardo ksc1 "Kerbal Space Controller 1")
 copy_platform(avr2 leonardo ksc2 "Kerbal Space Controller 2")
 
+# get_cmake_property(_variableNames VARIABLES)
+# foreach (_variableName ${_variableNames})
+#     message(STATUS "${_variableName}=${${_variableName}}")
+# endforeach()
+#
 # print_board_list()
 
 generate_arduino_library(Joystick
@@ -35,16 +35,20 @@ generate_arduino_library(Joystick
 
 generate_arduino_firmware(board1
     SRCS board1.cpp
-    HDRS Controller.hpp "${JOYSTICK_DIR}/Joystick.h"
+    HDRS Controller.hpp ButtonPresser.hpp Pressable.hpp LazyChanger.hpp
     LIBS Joystick
+    ARDLIBS Keyboard HID
     PORT /dev/ttyACM0
     PROGRAMMER avrispmkii
     BOARD ksc1)
 
+link_directories(${AVR_PLATFORM_PATH}/libraries)
+
 generate_arduino_firmware(board2
     SRCS board2.cpp
-    HDRS Controller.hpp "${JOYSTICK_DIR}/Joystick.h"
+    HDRS Controller.hpp ButtonPresser.hpp Pressable.hpp LazyChanger.hpp
     LIBS Joystick
+    ARDLIBS Keyboard HID
     PORT /dev/ttyACM1
     PROGRAMMER avrispmkii
     BOARD ksc2)
