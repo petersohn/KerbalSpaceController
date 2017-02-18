@@ -10,7 +10,7 @@
 #include "Controller.hpp"
 
 Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
-    15, 0, // button, hat switch
+    16, 0, // button, hat switch
     true, true, true, // x, y, z
     true, true, true, // rx, ry, rz
     false, false, // rudder, throttle
@@ -42,7 +42,7 @@ Pressable walkerXButtons[] = {Key('a'), Button{-1}, Key('d'), None{}};
 Pressable walkerYButtons[] = {Key('w'), Button{-1}, Key('s'), None{}};
 Pressable sasButtons[] = {Button{5}, Button{6}, Button{7}, Button{8},
         Button{9}, Button{10}, Button{11}, Button{12}, Button{13}, Button{14},
-        None{}};
+        Button{15}, None{}};
 
 MultiButtonData multiButtons[] = {
     MultiButtonData{A7, -1, walkerXButtons},
