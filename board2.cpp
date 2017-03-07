@@ -40,6 +40,7 @@ AxisData axes[] = {
 
 Pressable walkerXButtons[] = {Key('a'), Button{-1}, Key('d'), None{}};
 Pressable walkerYButtons[] = {Key('w'), Button{-1}, Key('s'), None{}};
+Pressable walkerTurnButtons[] = {Key('q'), Button{-1}, Key('e'), None{}};
 Pressable sasButtons[] = {Button{5}, Button{6}, Button{7}, Button{8},
         Button{9}, Button{10}, Button{11}, Button{12}, Button{13}, Button{14},
         Button{15}, None{}};
@@ -47,6 +48,7 @@ Pressable sasButtons[] = {Button{5}, Button{6}, Button{7}, Button{8},
 MultiButtonData multiButtons[] = {
     MultiButtonData{A7, -1, walkerXButtons},
     MultiButtonData{A6, -1, walkerYButtons},
+    MultiButtonData{A10, -1, walkerTurnButtons},
     MultiButtonData{A8, 9, sasButtons},
     MultiButtonData{}
 };
