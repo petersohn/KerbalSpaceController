@@ -14,10 +14,6 @@ module spike() {
     polygon([
         [-x, -spike_intersect],
         [x, -spike_intersect],
-    
-//        [-spike_length / 2, 0],
-  //      [spike_length / 2, 0],
-
         [0, spike_height]]);
 }
 
