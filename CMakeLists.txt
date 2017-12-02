@@ -26,7 +26,7 @@ copy_platform(avr2 leonardo ksc2 "Kerbal Space Controller 2")
 #     message(STATUS "${_variableName}=${${_variableName}}")
 # endforeach()
 #
-# print_board_list()
+print_board_list()
 
 generate_arduino_library(Joystick
     SRCS "${JOYSTICK_DIR}/Joystick.cpp" "${JOYSTICK_DIR}/DynamicHID.cpp"

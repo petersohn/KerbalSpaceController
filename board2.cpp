@@ -8,9 +8,9 @@
 #include <Keyboard.h>
 
 #include "AxisProcessor.hpp"
-#include "ButtonProcessor.hpp"
 #include "Controller.hpp"
 #include "MultiButtonProcessor.hpp"
+#include "MultiplexerProcessor.hpp"
 
 Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
     16, 0, // button, hat switch
@@ -19,16 +19,31 @@ Joystick_ joystick(0x04, JOYSTICK_TYPE_JOYSTICK,
     false, false, // rudder, throttle
     false, false, false); // accelerator, brake, steering
 
-ButtonProcessor buttons[] = {
-    ButtonProcessor{0, Button{0}},
-    ButtonProcessor{1, Button{1}},
-    ButtonProcessor{2, Button{2}},
-    ButtonProcessor{3, Key{KEY_ESC}},
-    ButtonProcessor{5, Key{KEY_F9}},
-    ButtonProcessor{7, Key{KEY_F5}},
-    ButtonProcessor{11, Button{3}},
-    ButtonProcessor{13, Button{4}},
-    ButtonProcessor{}
+int multiplexerAddressPins[] = {0, 1, 2, 3, 5, 7};
+
+Multiplexer multiplexer{12, multiplexerAddressPins};
+
+MultiplexerProcessor multiplexerButtons[] = {
+    MultiplexerProcessor{multiplexer, 000, Key{KEY_ESC}},
+    MultiplexerProcessor{multiplexer, 001, Key{KEY_F9}},
+    MultiplexerProcessor{multiplexer, 002, Key{KEY_F5}},
+    MultiplexerProcessor{multiplexer, 003, Button{0}},
+    MultiplexerProcessor{multiplexer, 004, Button{1}},
+    MultiplexerProcessor{multiplexer, 005, Button{2}},
+    MultiplexerProcessor{multiplexer, 006, Button{3}},
+    MultiplexerProcessor{multiplexer, 007, Key{'1'}},
+    MultiplexerProcessor{multiplexer, 010, Key{'2'}},
+    MultiplexerProcessor{multiplexer, 011, Key{'3'}},
+    MultiplexerProcessor{multiplexer, 012, Key{'4'}},
+    MultiplexerProcessor{multiplexer, 013, Key{'5'}},
+    MultiplexerProcessor{multiplexer, 014, Key{'6'}},
+    MultiplexerProcessor{multiplexer, 015, Key{'7'}},
+    MultiplexerProcessor{multiplexer, 016, Key{'8'}},
+    MultiplexerProcessor{multiplexer, 017, Key{'9'}},
+    MultiplexerProcessor{multiplexer, 020, Key{'0'}},
+    MultiplexerProcessor{multiplexer, 021, Key{KEY_LEFT_SHIFT}},
+    MultiplexerProcessor{multiplexer, 022, Key{KEY_RIGHT_SHIFT}},
+    MultiplexerProcessor{}
 };
 
 AxisProcessor axes[] = {
@@ -65,7 +80,7 @@ void setup() {
 
 void loop() {
     // Serial.println("loop");
-    processElements(joystick, buttons);
+    processElements(joystick, multiplexerButtons);
     processElements(joystick, axes);
     processElements(joystick, multiButtons);
     joystick.sendState();
